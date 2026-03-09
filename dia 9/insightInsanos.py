@@ -1,0 +1,63 @@
+import pandas as pd
+
+df_producto = pd.read_csv("dia 9/producto.csv")
+
+df_venta = pd.read_csv("dia 9/venta.csv")
+
+
+print(df_producto)
+
+print(df_venta)
+df_venta['existe_en_catalogo'] = df_venta['id_producto'].isin(df_producto['id_producto'])
+
+#Verificamos valores nulos en las tablas
+print(df_producto.isnull().sum())
+print()
+print(df_venta.isnull().sum())
+print()
+
+#No hay valores nulos, haremos merge.
+df_final = pd.merge(df_venta,df_producto, on = 'id_producto', how = "left" )
+
+
+df_final['ingreso_total'] = df_final['cantidad'] * df_final['precio']
+
+print(df_final)
+totalUnidades = df_final["cantidad"].sum()
+totalGanado = df_final['ingreso_total'].sum()
+ticketpromedio = totalGanado/totalUnidades
+ingresoPorciudad = df_final.groupby('ciudad')['ingreso_total'].sum()
+ventasPorciudad = df_final.groupby('ciudad')['cantidad'].sum()
+ticketpromedioPorCiudad = ingresoPorciudad/ventasPorciudad
+productoMasVendido = df_final.groupby('nombre')['cantidad'].sum().idxmax()
+productoMasRentable = df_final.groupby('nombre')['ingreso_total'].sum().idxmax()
+ingreso_por_categoria = df_final.groupby('categoria')['ingreso_total'].sum()
+porcentaje_categoria = (ingreso_por_categoria / totalGanado) * 100
+
+print("-" * 50)
+print("ANÁLISIS ESTRATÉGICO DE VENTAS")
+print("-" * 50)
+
+print(f"1. DESEMPEÑO GLOBAL:")
+print(f"   - Ingreso Total: ${totalGanado:,.2f}")
+print(f"   - Unidades Vendidas: {totalUnidades}")
+print(f"   - Valor Promedio por Artículo: ${ticketpromedio:,.2f}")
+print(f"   > INSIGHT: Este es el valor medio de cada producto que sale del inventario.")
+print()
+
+print(f"2. RENDIMIENTO POR CIUDAD (Ticket Promedio):")
+print(ticketpromedioPorCiudad.sort_values(ascending=False))
+print(f"   > INSIGHT: La ciudad de '{ticketpromedioPorCiudad.idxmax()}' genera el mayor valor por unidad vendida.")
+print()
+
+print(f"3. ANÁLISIS DE PRODUCTOS:")
+print(f"   - El más vendido (Volumen): {productoMasVendido}")
+print(f"   - El más rentable (Dinero): {productoMasRentable}")
+print(f"   > INSIGHT: Si el producto más vendido no es el más rentable, hay una oportunidad de up-selling.")
+print()
+
+print(f"4. CONCENTRACIÓN POR CATEGORÍA (% del Ingreso Total):")
+print(porcentaje_categoria.map("{:.2f}%".format))
+categoria_top = porcentaje_categoria.idxmax()
+print(f"   > INSIGHT: El negocio depende fuertemente de la categoría '{categoria_top}', con un {porcentaje_categoria.max():.2f}% de participación.")
+print()

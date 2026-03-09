@@ -1,0 +1,11 @@
+producto,categoria,precio,cantidad,ciudad
+Laptop,Tecnologia,3500,2,Medellin
+Mouse,Tecnologia,50,,Bogota
+Teclado,Tecnologia,120,3,Cali
+Celular,Tecnologia,2000,1,
+Silla,Hogar,300,2,Bogota
+Mesa,Hogar,,1,Cali
+Audifonos,Tecnologia,200,4,Medellin
+Lampara,Hogar,150,3,Bogota
+Monitor,Tecnologia,800,2,Cali
+Mouse,Tecnologia,50,5,Bogota
